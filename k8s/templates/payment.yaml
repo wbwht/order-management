@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.paymentservice.service.name }}
+spec:
+  selector:
+    app: {{ .Values.paymentservice.service.name }}
+  ports:
+    - protocol: TCP
+      port: {{ .Values.paymentservice.image.port }}
+      targetPort: {{ .Values.paymentservice.image.port }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.paymentservice.service.name }}-deployment
+  labels:
+    app: {{ .Values.paymentservice.service.name }}
+spec:
+  replicas: {{ .Values.paymentservice.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.paymentservice.service.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.paymentservice.service.name }}
+    spec:
+      containers:
+      - name: {{ .Values.paymentservice.service.name }}
+        image: {{ .Values.paymentservice.image.name }}:{{ .Values.paymentservice.image.tag }}
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        env:
+        - name: NODE_ENV
+          value: "production"
+        ports:
+        - containerPort: {{ .Values.paymentservice.image.port }}
+        imagePullPolicy: Never
+      serviceAccountName: default

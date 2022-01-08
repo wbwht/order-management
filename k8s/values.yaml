@@ -1,0 +1,35 @@
+order:
+  name: order-micro-svc
+  replicas: 1
+
+  image:
+    name: order-micro-svc
+    tag: v1
+    port: 7000
+  
+  service:
+    name: order-micro-svc
+    type: LoadBalancer
+
+
+paymentservice:
+  name: payment-micro-svc
+  replicas: 1
+
+  image:
+    name: payment-micro-svc
+    tag: v1
+    port: 8080
+  
+  service:
+    name: payment-micro-svc
+    type: LoadBalancer
+
+mongodb:
+  name: mongodb
+
+  image:
+    port: 27017
+
+  service:
+    name: mongodb

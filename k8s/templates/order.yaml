@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.order.service.name }}
+spec:
+  selector:
+    app: {{ .Values.order.service.name }}
+  ports:
+    - protocol: TCP
+      port: 70
+      targetPort: {{ .Values.order.image.port }}
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.order.name }}-deployment
+  labels:
+    app: {{ .Values.order.name }}
+spec:
+  replicas: {{ .Values.order.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.order.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.order.name }}
+    spec:
+      containers:
+      - name: {{ .Values.order.name }}
+        image: {{ .Values.order.image.name }}:{{ .Values.order.image.tag}}
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: MONGO_URL
+          value: mongodb://mongo:27017/dev
+        ports:
+        - containerPort: {{ .Values.order.image.port }}
+        imagePullPolicy: Never
+      serviceAccountName: default

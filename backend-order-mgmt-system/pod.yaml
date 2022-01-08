@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: order-micro-svc
+  labels:
+    app: order
+    type: backend
+spec:
+  containers:
+    - name: order
+      imagePullPolicy: IfNotPresent
+      image: order-management:1.0
+      resources:
+        limits:
+          memory: 512Mi
+          cpu: "1"
