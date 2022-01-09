@@ -8,7 +8,7 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: '127.0.0.1', //'payment',
+        host: 'payment', //'127.0.0.1', //'payment',
         port: 8080,
       },
     },

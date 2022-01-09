@@ -10,6 +10,8 @@ services:
       - /backend-order-mgmt-system/usr/src/app/node_modules
       # - ./:/order
       # - /usr/src/app/node_modules
+    expose:
+      - 7000
     ports:
       - 7000:7000
     command: npm run start:dev
@@ -30,6 +32,8 @@ services:
   payment:
     container_name: payment
     build: ./microservice-payment
+    expose:
+      - 8080
     ports: 
       - 8080:8080
     networks:
@@ -50,5 +54,7 @@ services:
       - webnet
 networks:
   webnet:
+    driver: bridge
+    name: webnet
 volumes:
   pgdata:
