@@ -1,7 +1,7 @@
 import { ClientProxy } from '@nestjs/microservices';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Model } from 'mongoose';
+import { Model, Schema as MongooseSchema, Schema } from 'mongoose';
 import {
   OrderDocument,
   OrderStates,
@@ -16,7 +16,7 @@ describe('OrdersService', () => {
   let mockedModel: Model<OrderDocument>;
   let mockedClient: ClientProxy;
   const mockOrder = {
-    _id: 123,
+    _id: new MongooseSchema.Types.ObjectId('123'),
     states: OrderStates.ORDER_UNDEFINED,
     name: 'Order Sample Name',
     amount: '99.90',
@@ -123,7 +123,7 @@ describe('OrdersService', () => {
 
       // Expectations
       const expectedCreateOrder = {
-        _id: 123,
+        _id: new MongooseSchema.Types.ObjectId('123'),
         states: OrderStates.ORDER_CONFIRMED,
         name: 'Order Sample Name',
         amount: '99.90',
@@ -147,7 +147,7 @@ describe('OrdersService', () => {
 
       // Expectations
       const expectedCreateOrder = {
-        _id: 123,
+        _id: new MongooseSchema.Types.ObjectId('123'),
         states: OrderStates.ORDER_UNDEFINED,
         name: 'Order Sample Name',
         amount: '99.90',
@@ -212,7 +212,7 @@ describe('OrdersService', () => {
 
       // Expectations
       const expectedCreateOrder = {
-        _id: 123,
+        _id: new MongooseSchema.Types.ObjectId('123'),
         states: OrderStates.ORDER_DELIVERED,
         name: 'Order Sample Name',
         amount: '99.90',
@@ -231,7 +231,7 @@ describe('OrdersService', () => {
       const modelUpdate = jest.spyOn(mockedModel, 'findByIdAndUpdate');
 
       // Actuall calls
-      await service.cancelOrder(Number(mockOrder._id), createOrderDto);
+      await service.cancelOrder(mockOrder._id, createOrderDto);
 
       // Expectations
       const expectedUpdatedOrder = {
@@ -242,7 +242,7 @@ describe('OrdersService', () => {
       };
       expect(modelUpdate).toHaveBeenCalled();
       expect(modelUpdate).toHaveBeenCalledWith(
-        Number(mockOrder._id),
+        mockOrder._id,
         expectedUpdatedOrder,
         { new: true },
       );
@@ -252,7 +252,7 @@ describe('OrdersService', () => {
   describe('findOneOrderStatus( )', () => {
     it('should return expected order states', async () => {
       const mockOrder = {
-        _id: '128',
+        _id: new MongooseSchema.Types.ObjectId('128'),
         states: OrderStates.ORDER_UNDEFINED,
         name: 'Order Sample Name',
         amount: '99.90',
@@ -261,7 +261,7 @@ describe('OrdersService', () => {
       jest.spyOn(service, 'findOne').mockResolvedValueOnce(mockOrder as any);
 
       // Actual calls
-      const retStates = await service.findOneOrderStatus(Number(mockOrder._id));
+      const retStates = await service.findOneOrderStatus(mockOrder._id);
 
       // Expectations
       expect(retStates).toEqual(OrderStates.ORDER_UNDEFINED);
@@ -283,7 +283,7 @@ describe('OrdersService', () => {
   describe('findOne( )', () => {
     it('should return an array of orders', async () => {
       const mockOrder = {
-        _id: 128,
+        _id: new MongooseSchema.Types.ObjectId('128'),
         states: OrderStates.ORDER_UNDEFINED,
         name: 'Order Sample Name',
         amount: '99.90',
