@@ -13,6 +13,7 @@ import {
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { Model, Schema as MongooseSchema } from 'mongoose';
 
 @Controller('orders')
 export class OrdersController {
@@ -29,13 +30,23 @@ export class OrdersController {
   }
 
   @Patch('/cancel/:id')
-  cancelOrder(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.cancelOrder(+id, updateOrderDto);
+  async cancelOrder(
+    @Res() res,
+    @Param('id') id: MongooseSchema.Types.ObjectId,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    await this.ordersService.cancelOrder(id, updateOrderDto);
+    return res.status(HttpStatus.OK).json({
+      message: 'Post has been cancelled successfully!',
+    });
   }
 
   @Get('/status/:id')
-  findOneOrderStatus(@Res() res, @Param('id') id: string) {
-    const order = this.ordersService.findOne(+id);
+  async findOneOrderStatus(
+    @Res() res,
+    @Param('id') id: MongooseSchema.Types.ObjectId,
+  ) {
+    const order = await this.ordersService.findOne(id);
     if (!order) throw new NotFoundException('Post does not exist');
     return res.status(HttpStatus.OK).json(order);
   }
@@ -48,19 +59,22 @@ export class OrdersController {
   }
 
   @Get(':id')
-  findOne(@Res() res, @Param('id') id: string) {
-    const order = this.ordersService.findOne(+id);
+  async findOne(@Res() res, @Param('id') id: MongooseSchema.Types.ObjectId) {
+    const order = await this.ordersService.findOne(id);
     if (!order) throw new NotFoundException('Post does not exist');
     return res.status(HttpStatus.OK).json(order);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(
+    @Param('id') id: MongooseSchema.Types.ObjectId,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
+    return this.ordersService.update(id, updateOrderDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ordersService.remove(+id);
+  remove(@Param('id') id: MongooseSchema.Types.ObjectId) {
+    return this.ordersService.remove(id);
   }
 }

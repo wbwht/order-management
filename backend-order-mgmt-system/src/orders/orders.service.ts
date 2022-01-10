@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Schema as MongooseSchema } from 'mongoose';
 import {
   Order,
   OrderDocument,
@@ -59,14 +59,19 @@ export class OrdersService {
     // return await this.update(createdOrder._id, createdOrder);
   }
 
-  async cancelOrder(id: number, updateOrderDto: UpdateOrderDto) {
+  async cancelOrder(
+    id: MongooseSchema.Types.ObjectId,
+    updateOrderDto: UpdateOrderDto,
+  ) {
     updateOrderDto.states = OrderStates.ORDER_CANCELLED;
     await this.update(id, updateOrderDto);
     console.log('Cancelling order & Update ' + id + ' order');
     // return editedOrder;
   }
 
-  async findOneOrderStatus(id: number): Promise<OrderStates> {
+  async findOneOrderStatus(
+    id: MongooseSchema.Types.ObjectId,
+  ): Promise<OrderStates> {
     const order = await this.findOne(id);
     return order.states;
   }
@@ -78,13 +83,16 @@ export class OrdersService {
     return orders;
   }
 
-  async findOne(id: number): Promise<Order> {
+  async findOne(id: MongooseSchema.Types.ObjectId): Promise<Order> {
     const order = await this.orderModel.findById(id).exec();
-    console.log('Find order with id: ' + id);
+    console.log('Find order with id: ' + id + ' ' + JSON.stringify(order));
     return order;
   }
 
-  async update(id: number, updateOrderDto: UpdateOrderDto) {
+  async update(
+    id: MongooseSchema.Types.ObjectId,
+    updateOrderDto: UpdateOrderDto,
+  ) {
     const editedOrder = await this.orderModel.findByIdAndUpdate(
       id,
       updateOrderDto,
@@ -94,7 +102,7 @@ export class OrdersService {
     return editedOrder;
   }
 
-  async remove(id: number): Promise<any> {
+  async remove(id: MongooseSchema.Types.ObjectId): Promise<any> {
     const removedOrder = await this.orderModel.findByIdAndRemove(id);
     console.log('Removes ' + id + ' order');
     return removedOrder;
