@@ -42,6 +42,14 @@ spec:
           value: "production"
         - name: MONGO_URL
           value: mongodb://mongo:27017/dev
+        - name: MONGO_USER
+          value: "app_user"
+        - name: MONGO_PASSWORD
+          value: "app_password"
+        - name: MONGO_HOSTNAME
+          value: "mongodb"
+        - name: MONGO_PORT
+          value: "27017"
         ports:
         - containerPort: {{ .Values.order.image.port }}
         imagePullPolicy: Never

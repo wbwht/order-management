@@ -35,9 +35,16 @@ spec:
     spec:
       containers:
         - name: {{ .Values.mongodb.name }}
-          image: mongo:3.6.17-xenial
+          image: mongo
           ports:
             - containerPort: {{ .Values.mongodb.image.port }}
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: app_user
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: app_password
+          - name: MONGO_INITDB_DATABASE
+            value: admin
           volumeMounts:
             - name: storage
               mountPath: /data/db
